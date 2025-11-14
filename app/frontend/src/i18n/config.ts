@@ -31,6 +31,11 @@ export interface Translations {
   worldMapNoCountriesHint: string
   worldMapProcessing: string
   worldMapUploadHint: string
+  worldMapLevel: string
+  worldMapLevelTitle: string
+  worldMapCountriesUnlocked: string
+  worldMapDishesUnlocked: string
+  worldMapNextLevel: string
 
   // RecipeCard
   recipeViewDetails: string
@@ -79,6 +84,11 @@ export const translations: Record<Language, Translations> = {
     worldMapNoCountriesHint: '上传菜肴图片来解锁国家。',
     worldMapProcessing: '正在处理图片...',
     worldMapUploadHint: '上传一张菜肴图片查看结果',
+    worldMapLevel: '等级',
+    worldMapLevelTitle: '美食探索家',
+    worldMapCountriesUnlocked: '已解锁国家',
+    worldMapDishesUnlocked: '已解锁菜肴',
+    worldMapNextLevel: '距离下一级还需',
 
     // RecipeCard
     recipeViewDetails: '查看详情',
@@ -125,6 +135,11 @@ export const translations: Record<Language, Translations> = {
     worldMapNoCountriesHint: 'Sube imágenes de platos para desbloquear países.',
     worldMapProcessing: 'Procesando imagen...',
     worldMapUploadHint: 'Sube una imagen de un plato para ver los resultados',
+    worldMapLevel: 'Nivel',
+    worldMapLevelTitle: 'Explorador Gastronómico',
+    worldMapCountriesUnlocked: 'Países Desbloqueados',
+    worldMapDishesUnlocked: 'Platos Desbloqueados',
+    worldMapNextLevel: 'Para el siguiente nivel',
 
     // RecipeCard
     recipeViewDetails: 'Ver detalles',
