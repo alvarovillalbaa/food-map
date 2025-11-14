@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react'
 import ImageUploader from '@/components/main/ImageUploader'
 import DishResultBox from '@/components/main/DishResultBox'
