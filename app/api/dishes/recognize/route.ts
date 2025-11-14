@@ -3,6 +3,8 @@ import { generateObject } from 'ai'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
+export const runtime = 'nodejs'
+
 const dishRecognitionSchema = z.object({
     dishName: z.string().describe('The name of the dish in the image'),
     countryName: z

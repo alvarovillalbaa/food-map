@@ -59,6 +59,14 @@ export default function WorldMapPage() {
           body: JSON.stringify({ image: base64String }),
         })
 
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('API error:', error)
+          alert(`Error: ${error.error || 'Failed to recognize dish'}`)
+          setLoading(false)
+          return
+        }
+
         const data = await response.json()
         setDishName(data.dishName || '')
         setCountryName(data.countryName || '')
