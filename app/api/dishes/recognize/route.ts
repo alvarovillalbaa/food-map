@@ -23,6 +23,15 @@ const dishRecognitionSchema = z.object({
 
 export async function POST(req: Request) {
     try {
+        // Check if API key is configured
+        if (!process.env.ANTHROPIC_API_KEY) {
+            console.error('ANTHROPIC_API_KEY is not set in environment variables')
+            return NextResponse.json(
+                { error: 'API key not configured. Please add ANTHROPIC_API_KEY to .env.local' },
+                { status: 500 }
+            )
+        }
+
         const { image } = await req.json()
 
         if (!image || typeof image !== 'string') {
@@ -75,10 +84,18 @@ Be as specific as possible with the dish name. If you recognize a specific regio
         })
     } catch (error) {
         console.error('Error recognizing dish:', error)
+
+        // Provide helpful error message
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        const isApiKeyError = errorMessage.includes('API key') || errorMessage.includes('authentication')
+
         return NextResponse.json(
             {
                 error: 'Failed to recognize dish',
-                details: error instanceof Error ? error.message : 'Unknown error',
+                details: errorMessage,
+                hint: isApiKeyError
+                    ? 'Make sure ANTHROPIC_API_KEY is set in .env.local and restart the dev server'
+                    : 'Check console logs for details',
             },
             { status: 500 }
         )
