@@ -20,18 +20,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Extract the base64 data and media type from the data URL
-    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
-    if (!matches) {
-      return NextResponse.json(
-        { error: 'Invalid base64 image format' },
-        { status: 400 }
-      )
-    }
-
-    const mediaType = matches[1]
-    const base64Data = matches[2]
-
     const { object } = await generateObject({
       model: anthropic('claude-3-5-sonnet-20241022'),
       temperature: 0,
@@ -42,8 +30,7 @@ export async function POST(req: Request) {
           content: [
             {
               type: 'image',
-              image: base64Data,
-              mimeType: mediaType,
+              image: image,
             },
             {
               type: 'text',
