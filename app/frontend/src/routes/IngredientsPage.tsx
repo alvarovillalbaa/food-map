@@ -11,7 +11,7 @@ interface Recipe {
   title: string
   description: string
   usedIngredients: string[]
-  steps: string[]
+  steps?: string[]
 }
 
 export default function IngredientsPage() {
