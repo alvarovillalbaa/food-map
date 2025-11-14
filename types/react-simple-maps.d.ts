@@ -38,8 +38,8 @@ declare module 'react-simple-maps' {
     className?: string
   }
 
-  export const ComposableMap: React.FC<ComposableMapProps>
-  export const Geographies: React.FC<GeographiesProps>
-  export const Geography: React.FC<GeographyProps>
+  export function ComposableMap(props: ComposableMapProps): ReactNode
+  export function Geographies(props: GeographiesProps): ReactNode
+  export function Geography(props: GeographyProps): ReactNode
 }
 
