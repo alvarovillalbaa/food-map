@@ -1,6 +1,5 @@
-'use client'
-
-import * as React from 'react'
+import { useState } from 'react'
+import { useI18n } from '../i18n/context'
 
 interface IngredientChipsProps {
   ingredients: string[]
@@ -9,7 +8,8 @@ interface IngredientChipsProps {
 }
 
 export default function IngredientChips({ ingredients, onRemove, onAdd }: IngredientChipsProps) {
-  const [newIngredient, setNewIngredient] = React.useState('')
+  const { t } = useI18n()
+  const [newIngredient, setNewIngredient] = useState('')
 
   const handleAdd = () => {
     if (newIngredient.trim() && onAdd) {
@@ -46,14 +46,14 @@ export default function IngredientChips({ ingredients, onRemove, onAdd }: Ingred
             value={newIngredient}
             onChange={(e) => setNewIngredient(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
-            placeholder="Añadir ingrediente..."
+            placeholder={t.ingredientsAddPlaceholder}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <button
             onClick={handleAdd}
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
-            Añadir
+            {t.ingredientsAddButton}
           </button>
         </div>
       )}

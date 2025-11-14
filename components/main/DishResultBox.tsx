@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/context'
+
 interface DishResultBoxProps {
   dishName?: string
   countryName?: string
@@ -6,10 +8,12 @@ interface DishResultBoxProps {
 }
 
 export default function DishResultBox({ dishName, countryName, countryCode, confidence }: DishResultBoxProps) {
+  const { t } = useI18n()
+
   if (!dishName) {
     return (
       <div className="bg-gray-50 rounded-lg p-6 text-center text-gray-500">
-        <p>Sube una imagen de un plato para ver los resultados</p>
+        <p>{t.worldMapUploadHint}</p>
       </div>
     )
   }
@@ -17,12 +21,12 @@ export default function DishResultBox({ dishName, countryName, countryCode, conf
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
       <div>
-        <p className="text-sm text-gray-600">Plato detectado:</p>
+        <p className="text-sm text-gray-600">{t.worldMapDishDetected}</p>
         <p className="text-2xl font-bold text-gray-900">{dishName}</p>
       </div>
 
       <div>
-        <p className="text-sm text-gray-600">País:</p>
+        <p className="text-sm text-gray-600">{t.worldMapCountry}</p>
         <p className="text-xl font-semibold text-indigo-700">
           {countryName} {countryCode && getCountryFlag(countryCode)}
         </p>
@@ -30,7 +34,7 @@ export default function DishResultBox({ dishName, countryName, countryCode, conf
 
       {confidence !== undefined && (
         <div>
-          <p className="text-sm text-gray-600 mb-2">Confianza:</p>
+          <p className="text-sm text-gray-600 mb-2">{t.worldMapConfidence}</p>
           <div className="w-full bg-gray-200 rounded-full h-4">
             <div
               className="bg-indigo-600 h-4 rounded-full transition-all duration-300"

@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/context'
+
 interface UnlockedCountry {
   code: string
   name: string
@@ -9,11 +11,13 @@ interface UnlockedCountryListProps {
 }
 
 export default function UnlockedCountryList({ countries }: UnlockedCountryListProps) {
+  const { t } = useI18n()
+
   if (countries.length === 0) {
     return (
       <div className="text-center text-gray-500 py-4">
-        <p>No hay países desbloqueados aún.</p>
-        <p className="text-sm mt-2">Sube imágenes de platos para desbloquear países.</p>
+        <p>{t.worldMapNoCountries}</p>
+        <p className="text-sm mt-2">{t.worldMapNoCountriesHint}</p>
       </div>
     )
   }
@@ -21,7 +25,7 @@ export default function UnlockedCountryList({ countries }: UnlockedCountryListPr
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">
-        Países Desbloqueados
+        {t.worldMapUnlockedCountries}
       </h3>
       <div className="space-y-3">
         {countries.map((country, index) => (

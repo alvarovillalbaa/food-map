@@ -1,6 +1,5 @@
-'use client'
-
-import * as React from 'react'
+import { useState } from 'react'
+import { useI18n } from '../i18n/context'
 
 interface ImageUploaderProps {
   onImageSelect: (file: File) => void
@@ -8,7 +7,8 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({ onImageSelect, previewUrl }: ImageUploaderProps) {
-  const [dragActive, setDragActive] = React.useState(false)
+  const { t } = useI18n()
+  const [dragActive, setDragActive] = useState(false)
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
@@ -76,7 +76,7 @@ export default function ImageUploader({ onImageSelect, previewUrl }: ImageUpload
               />
             </svg>
             <p className="text-sm text-gray-600">
-              Haz clic para subir o arrastra una imagen aquí
+              {t.commonUploadImage}
             </p>
           </div>
         </label>

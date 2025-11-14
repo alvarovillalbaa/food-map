@@ -1,10 +1,22 @@
+import { useI18n } from '../i18n/context'
 import RecipeCard from './RecipeCard'
+
+interface NutritionalInfo {
+  calories: number
+  protein: string
+  carbs: string
+  fat: string
+}
 
 interface Recipe {
   title: string
   description: string
   usedIngredients: string[]
-  steps?: string[]
+  steps: string[]
+  cookingTime: string
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+  servings: number
+  nutritionalInfo: NutritionalInfo
 }
 
 interface RecipeListProps {
@@ -13,11 +25,13 @@ interface RecipeListProps {
 }
 
 export default function RecipeList({ recipes, onRecipeClick }: RecipeListProps) {
+  const { t } = useI18n()
+
   if (recipes.length === 0) {
     return (
       <div className="text-center text-gray-500 py-8">
-        <p>No hay recetas sugeridas aún.</p>
-        <p className="text-sm mt-2">Sube una imagen de ingredientes para comenzar.</p>
+        <p>{t.ingredientsNoRecipes}</p>
+        <p className="text-sm mt-2">{t.ingredientsNoRecipesHint}</p>
       </div>
     )
   }
@@ -30,6 +44,10 @@ export default function RecipeList({ recipes, onRecipeClick }: RecipeListProps) 
           title={recipe.title}
           description={recipe.description}
           usedIngredients={recipe.usedIngredients}
+          cookingTime={recipe.cookingTime}
+          difficulty={recipe.difficulty}
+          servings={recipe.servings}
+          nutritionalInfo={recipe.nutritionalInfo}
           onViewDetails={onRecipeClick ? () => onRecipeClick(recipe) : undefined}
         />
       ))}
