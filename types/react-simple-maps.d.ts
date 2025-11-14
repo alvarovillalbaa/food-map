@@ -1,5 +1,5 @@
 declare module 'react-simple-maps' {
-  import { ReactNode } from 'react'
+  import * as React from 'react'
 
   export interface Geography {
     rsmKey: string
@@ -17,12 +17,12 @@ declare module 'react-simple-maps' {
       center?: [number, number]
     }
     className?: string
-    children?: ReactNode
+    children?: React.ReactNode
   }
 
   export interface GeographiesProps {
     geography: string
-    children?: (params: { geographies: Geography[] }) => ReactNode
+    children?: (params: { geographies: Geography[] }) => React.ReactNode
   }
 
   export interface GeographyProps {
@@ -38,8 +38,8 @@ declare module 'react-simple-maps' {
     className?: string
   }
 
-  export function ComposableMap(props: ComposableMapProps): ReactNode
-  export function Geographies(props: GeographiesProps): ReactNode
-  export function Geography(props: GeographyProps): ReactNode
+  export function ComposableMap(props: ComposableMapProps): JSX.Element
+  export function Geographies(props: GeographiesProps): JSX.Element
+  export function Geography(props: GeographyProps): JSX.Element
 }
 
