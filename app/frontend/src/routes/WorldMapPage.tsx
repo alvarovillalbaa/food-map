@@ -5,6 +5,7 @@ import DishResultBox from '../components/DishResultBox'
 import WorldMap from '../components/WorldMap'
 import UnlockedCountryList from '../components/UnlockedCountryList'
 import LanguageSwitcher from '../components/LanguageSwitcher'
+import LevelDisplay from '../components/LevelDisplay'
 
 const API_BASE_URL = 'http://localhost:4000/api'
 
@@ -24,6 +25,7 @@ export default function WorldMapPage() {
   const [confidence, setConfidence] = useState<number>(0)
   const [unlockedCountries, setUnlockedCountries] = useState<UnlockedCountry[]>([])
   const [loading, setLoading] = useState(false)
+  const [highlightedCountry, setHighlightedCountry] = useState<string | undefined>(undefined)
 
   // Load unlocked countries on mount
   useEffect(() => {
@@ -62,37 +64,52 @@ export default function WorldMapPage() {
         })
 
         const data = await response.json()
+        console.log('识别结果:', data) // 调试信息
+        
         setDishName(data.dishName || '')
         setCountryName(data.countryName || '')
         setCountryCode(data.countryCode || '')
         setConfidence(data.confidence || 0)
 
-        // Update unlocked countries
+        // Update unlocked countries and highlight new country
         if (data.countryCode && data.dishName) {
-          const updatedCountries = [...unlockedCountries]
-          const existingCountryIndex = updatedCountries.findIndex(
-            (c) => c.code === data.countryCode
-          )
+          setUnlockedCountries((prevCountries) => {
+            const updatedCountries = [...prevCountries]
+            const existingCountryIndex = updatedCountries.findIndex(
+              (c) => c.code?.toLowerCase() === data.countryCode?.toLowerCase()
+            )
 
-          if (existingCountryIndex >= 0) {
-            // Add dish to existing country if not already present
-            if (!updatedCountries[existingCountryIndex].dishes.includes(data.dishName)) {
-              updatedCountries[existingCountryIndex].dishes.push(data.dishName)
+            const isNewCountry = existingCountryIndex < 0
+
+            if (existingCountryIndex >= 0) {
+              // Add dish to existing country if not already present
+              if (!updatedCountries[existingCountryIndex].dishes.includes(data.dishName)) {
+                updatedCountries[existingCountryIndex].dishes.push(data.dishName)
+              }
+            } else {
+              // Add new country
+              updatedCountries.push({
+                code: data.countryCode,
+                name: data.countryName,
+                dishes: [data.dishName],
+              })
             }
-          } else {
-            // Add new country
-            updatedCountries.push({
-              code: data.countryCode,
-              name: data.countryName,
-              dishes: [data.dishName],
-            })
-          }
 
-          setUnlockedCountries(updatedCountries)
+            console.log('更新后的国家列表:', updatedCountries) // 调试信息
+            console.log('新国家:', isNewCountry, data.countryCode) // 调试信息
+
+            // Highlight newly unlocked country
+            if (isNewCountry) {
+              setHighlightedCountry(data.countryCode)
+              // Remove highlight after 3 seconds
+              setTimeout(() => {
+                setHighlightedCountry(undefined)
+              }, 3000)
+            }
+
+            return updatedCountries
+          })
         }
-
-        // Refresh unlocked countries from server
-        await fetchUnlockedCountries()
       }
       reader.readAsDataURL(file)
     } catch (error) {
@@ -113,6 +130,12 @@ export default function WorldMapPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Columna Izquierda */}
           <div className="space-y-6">
+            {/* Level Display */}
+            <LevelDisplay
+              unlockedCountries={unlockedCountries.length}
+              unlockedDishes={unlockedCountries.reduce((sum, country) => sum + country.dishes.length, 0)}
+            />
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 {t.worldMapUploadTitle}
@@ -142,7 +165,12 @@ export default function WorldMapPage() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 {t.worldMapGastronomicTitle}
               </h2>
-              <WorldMap unlockedCountries={unlockedCountries} />
+              <div key={`map-${unlockedCountries.length}-${highlightedCountry || 'none'}`}>
+                <WorldMap 
+                  unlockedCountries={unlockedCountries}
+                  highlightedCountry={highlightedCountry}
+                />
+              </div>
             </div>
 
             <UnlockedCountryList countries={unlockedCountries} />
