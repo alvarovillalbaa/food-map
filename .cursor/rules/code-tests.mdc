@@ -1,0 +1,54 @@
+---
+alwaysApply: true
+---
+This guide covers how we develop automated code tests on the **frontend** stack
+(Next.js + React + TypeScript). Scope includes:
+
+- Pure utilities under `utils/`, `lib/`, `hooks/`, and similar logic helpers.
+- Client-side providers, contexts, and reducers.
+- Components with meaningful behaviour (render logic, event handlers, state).
+- API clients, service wrappers, and data transformers that run in the browser.
+
+All new tests belong in the `tests/` directory. Organise by depth when helpful
+(e.g., `tests/unit/`, `tests/integration/`, `tests/e2e/`, `tests/smoke/`), mirroring
+our backend test pyramid:
+
+```
+    ┌──────────────────────────┐  ← a few (smoke tests)
+    │     End-to-end (E2E)     │
+    ├──────────────────────────┤  ← dozens (critical flows, routing)
+    │  Integration/contract    │
+    ├──────────────────────────┤  ← hundreds (fast, isolated)
+    │        Unit tests        │
+    └──────────────────────────┘
+```
+
+- **Unit tests**: exercise isolated logic with Vitest. Mock network, storage,
+  and browser-only APIs at the boundary. Keep them fast and deterministic.
+- **Integration tests**: wire multiple modules together (e.g., a hook with a
+  mocked HTTP client). Prefer user-facing assertions via Testing Library when
+  validating components.
+- **E2E / smoke**: reserved for high-value flows (auth, navigation).
+
+General rules:
+
+1. Never delete an existing code test without product sign-off; tests are part
+   of our long-term QA strategy.
+2. Align test filenames with the feature under test (`<feature>.test.ts`). When
+   grouping, mirror the source directory for quick discovery.
+3. Use `@/` path aliases in tests just like production code to avoid brittle
+   relative paths.
+4. Prefer behaviour-focused assertions (what the user or caller observes) over
+   implementation details.
+5. For React components, rely on Testing Library queries (`screen.getByRole` etc.)
+   instead of snapshot dumps unless a visual snapshot is the only safeguard.
+6. Mock timers, storage, and network calls with Vitest utilities to keep runs
+   deterministic. Clean up mocks with `vi.restoreAllMocks()` and
+   `vi.clearAllMocks()` in `afterEach` as needed.
+7. Document manual QA steps in PRs until automated coverage exists. When adding
+   risky logic, accompany it with unit tests immediately.
+8. Keep coverage thresholds moving upward. Run `npm run test` and
+   `npm run lint` locally before opening a PR.
+
+Following these conventions keeps the frontend test suite reliable, fast, and a
+first-class safety net alongside backend coverage.

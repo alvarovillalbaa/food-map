@@ -1,0 +1,257 @@
+---
+alwaysApply: false
+---
+You are an expert in UI and UX design principles for software development.
+
+Visual Design
+- Establish a clear visual hierarchy to guide user attention.
+- Choose a cohesive color palette that reflects the brand (ask the user for guidelines).
+- Use typography effectively for readability and emphasis.
+- Maintain sufficient contrast for legibility (WCAG 2.1 AA standard).
+- Design with a consistent style across the application.
+
+Interaction Design
+- Create intuitive navigation patterns.
+- Use familiar UI components to reduce cognitive load.
+- Provide clear calls-to-action to guide user behavior.
+- Implement responsive design for cross-device compatibility.
+- Use animations judiciously to enhance user experience.
+
+Accessibility
+- Follow WCAG guidelines for web accessibility.
+- Use semantic HTML to enhance screen reader compatibility.
+- Provide alternative text for images and non-text content.
+- Ensure keyboard navigability for all interactive elements.
+- Test with various assistive technologies.
+
+Performance Optimization
+- Optimize images and assets to minimize load times.
+- Implement lazy loading for non-critical resources.
+- Use code splitting to improve initial load performance.
+- Monitor and optimize Core Web Vitals (LCP, FID, CLS).
+
+User Feedback
+- Incorporate clear feedback mechanisms for user actions.
+- Use loading indicators for asynchronous operations.
+- Provide clear error messages and recovery options.
+- Implement analytics to track user behavior and pain points.
+
+Information Architecture
+- Organize content logically to facilitate easy access.
+- Use clear labeling and categorization for navigation.
+- Implement effective search functionality.
+- Create a sitemap to visualize overall structure.
+
+Mobile-First Design
+- Design for mobile devices first, then scale up.
+- Use touch-friendly interface elements.
+- Implement gestures for common actions (swipe, pinch-to-zoom).
+- Consider thumb zones for important interactive elements.
+
+Consistency
+- Develop and adhere to a design system.
+- Use consistent terminology throughout the interface.
+- Maintain consistent positioning of recurring elements.
+- Ensure visual consistency across different sections.
+
+Testing and Iteration
+- Conduct A/B testing for critical design decisions.
+- Use heatmaps and session recordings to analyze user behavior.
+- Regularly gather and incorporate user feedback.
+- Continuously iterate on designs based on data and feedback.
+
+Documentation
+- Maintain a comprehensive style guide.
+- Document design patterns and component usage.
+- Create user flow diagrams for complex interactions.
+- Keep design assets organized and accessible to the team.
+
+Fluid Layouts
+- Use relative units (%, em, rem) instead of fixed pixels.
+- Implement CSS Grid and Flexbox for flexible layouts.
+- Design with a mobile-first approach, then scale up.
+
+Media Queries
+- Use breakpoints to adjust layouts for different screen sizes.
+- Focus on content needs rather than specific devices.
+- Test designs across a range of devices and orientations.
+
+Images and Media
+- Use responsive images with srcset and sizes attributes.
+- Implement lazy loading for images and videos.
+- Use CSS to make embedded media (like iframes) responsive.
+
+Typography
+- Use relative units (em, rem) for font sizes.
+- Adjust line heights and letter spacing for readability on small screens.
+- Implement a modular scale for consistent typography across breakpoints.
+
+Touch Targets
+- Ensure interactive elements are large enough for touch (min 44x44 pixels).
+- Provide adequate spacing between touch targets.
+- Consider hover states for desktop and focus states for touch/keyboard.
+
+Performance
+- Optimize assets for faster loading on mobile networks.
+- Use CSS animations instead of JavaScript when possible.
+- Implement critical CSS for above-the-fold content.
+
+Content Prioritization
+- Prioritize content display for mobile views.
+- Use progressive disclosure to reveal content as needed.
+- Implement off-canvas patterns for secondary content on small screens.
+
+Navigation
+- Design mobile-friendly navigation patterns (e.g., hamburger menu).
+- Ensure navigation is accessible via keyboard and screen readers.
+- Consider using a sticky header for easy navigation access.
+
+Forms
+- Design form layouts that adapt to different screen sizes.
+- Use appropriate input types for better mobile experiences.
+- Implement inline validation and clear error messaging.
+
+Testing
+- Use browser developer tools to test responsiveness.
+- Test on actual devices, not just emulators.
+- Conduct usability testing across different device types.
+
+Stay updated with the latest responsive design techniques and browser capabilities.
+Refer to industry-standard guidelines and stay updated with latest UI/UX trends and best practices.
+
+## 🎯 Comprehensive Web Interface Guidelines
+
+### Interactions & Accessibility
+- **Keyboard Accessibility**: All flows are keyboard-operable & follow WAI-ARIA Authoring Patterns
+- **Clear Focus**: Every focusable element shows a visible focus ring. Prefer `:focus-visible` over `:focus`
+- **Focus Management**: Use focus traps, move & return focus according to WAI-ARIA Patterns
+- **Hit Targets**: Match visual & hit targets. If visual target < 24px, expand hit target to ≥ 24px. Mobile minimum: 44px
+- **Mobile Input**: `<input>` font size ≥ 16px on mobile to prevent iOS Safari auto-zoom/pan
+- **Respect Zoom**: Never disable browser zoom
+- **Hydration Safety**: Inputs must not lose focus or value after hydration
+- **Paste Support**: Never disable paste in `<input>` or `<textarea>`
+- **Loading States**: Show loading indicator & keep original label on buttons
+- **Loading Timing**: Add show-delay (~150–300ms) & minimum visible time (~300–500ms) to avoid flicker
+- **URL State**: Persist state in URL for share, refresh, Back/Forward navigation (use nuqs)
+- **Optimistic Updates**: Update UI immediately when success is likely; reconcile on server response
+- **Ellipsis Convention**: Menu options that open follow-up end with ellipsis ("Rename…")
+- **Destructive Actions**: Require confirmation or provide Undo with safe window
+- **Touch Actions**: Set `touch-action: manipulation` to prevent double-tap zoom
+- **Tap Highlight**: Set `webkit-tap-highlight-color` to match design
+- **Tooltip Timing**: Delay first tooltip in group; subsequent peers have no delay
+- **Overscroll**: Set `overscroll-behavior: contain` in modals/drawers
+- **Scroll Persistence**: Back/Forward restores prior scroll position
+- **Autofocus**: Use on desktop screens with single primary input. Rarely on mobile due to layout shift
+- **No Dead Zones**: If part of control looks interactive, it should be interactive
+- **Deep Linking**: Link filters, tabs, pagination, expanded panels - anytime useState is used
+- **Drag Interactions**: Disable text selection & apply inert while dragging
+- **Links**: Use `<a>` or `<Link>` for navigation, never `<button>` or `<div>`
+- **Async Updates**: Use polite `aria-live` for toasts & inline validation
+- **Keyboard Shortcuts**: Internationalize for non-QWERTY layouts with platform-specific symbols
+
+### Animations & Motion
+- **Motion Preference**: Honor `prefers-reduced-motion` with reduced-motion variant
+- **Implementation**: Prefer CSS > Web Animations API > JavaScript libraries
+- **Compositor-Friendly**: Prioritize GPU-accelerated properties (`transform`, `opacity`)
+- **Necessity**: Only animate when it clarifies cause & effect or adds deliberate delight
+- **Easing**: Choose based on what changes (size, distance, trigger)
+- **Interruptible**: Animations are cancelable by user input
+- **Input-Driven**: Avoid autoplay; animate in response to actions
+- **Transform Origin**: Anchor motion to where it "physically" starts
+- **Never `transition: all`**: Explicitly list only intended properties
+- **SVG Transforms**: Apply to `<g>` wrappers with `transform-box: fill-box; transform-origin: center;`
+
+### Layout & Visual Design
+- **Optical Alignment**: Adjust ±1px when perception beats geometry
+- **Deliberate Alignment**: Every element aligns intentionally to grid, baseline, edge, or optical center
+- **Contrast Balance**: Adjust weight, size, spacing, or color when text & icons sit side by side
+- **Responsive Coverage**: Verify on mobile, laptop, & ultra-wide (zoom to 50% for ultra-wide)
+- **Safe Areas**: Account for notches & insets with safe-area variables
+- **Scrollbars**: Only render useful scrollbars; fix overflow issues
+- **Browser Sizing**: Prefer flex/grid/intrinsic layout over measuring in JS
+- **Layered Shadows**: Mimic ambient + direct light with at least two layers
+- **Crisp Borders**: Combine borders & shadows; semi-transparent borders improve edge clarity
+- **Nested Radii**: Child radius ≤ parent radius & concentric so curves align
+- **Hue Consistency**: On non-neutral backgrounds, tint borders/shadows/text toward same hue
+- **Accessible Charts**: Use color-blind-friendly palettes
+- **Minimum Contrast**: Prefer APCA over WCAG 2 for more accurate perceptual contrast
+- **Interaction Contrast**: :hover, :active, :focus have more contrast than rest state
+- **Browser UI**: Set `<meta name="theme-color">` to align browser theme with page background
+- **Color Scheme**: Style `<html>` with `color-scheme: dark` in dark themes
+- **Text Anti-aliasing**: Scaling text can change smoothing; prefer animating wrapper
+- **Avoid Gradient Banding**: Some colors & display types have banding; use masks instead
+
+### Content & Typography
+- **Inline Help**: Prefer inline explanations; use tooltips as last resort
+- **Stable Skeletons**: Mirror final content exactly to avoid layout shift
+- **Page Titles**: `<title>` reflects current context
+- **No Dead Ends**: Every screen offers next step or recovery path
+- **All States**: Design empty, sparse, dense, & error states
+- **Typography**: Use curly quotes (" ") over straight quotes (" ")
+- **Avoid Widows/Orphans**: Tidy rag & line breaks
+- **Tabular Numbers**: Use `font-variant-numeric: tabular-nums` for comparisons
+- **Status Cues**: Don't rely on color alone; include text labels
+- **Icon Labels**: Convey same meaning with text for non-sighted users
+- **Ellipsis Character**: Use … over three periods
+- **Anchored Headings**: Set `scroll-margin-top` for headers when linking to sections
+- **Content Resilience**: Handle short, average, & very long content
+- **Locale Formats**: Format dates, times, numbers, delimiters, & currencies for user's locale
+- **Language Detection**: Use Accept-Language header & navigator.languages, never IP/GPS
+- **Accessible Content**: Set accurate names (`aria-label`), hide decoration (`aria-hidden`)
+- **Icon Buttons**: Provide descriptive `aria-label`
+- **Semantics First**: Prefer native elements before `aria-*`
+- **Headings**: Hierarchical `<h1–h6>` & "Skip to content" link
+- **Non-breaking Spaces**: Use `&nbsp;` for units, shortcuts & names: `10&nbsp;MB`, `⌘&nbsp;+&nbsp;K`
+
+### Forms & Input Design
+- **Enter Submits**: When text input focused, Enter submits
+- **Textarea Behavior**: In `<textarea>`, ⌘/⌃+Enter submits; Enter inserts new line
+- **Labels Everywhere**: Every control has `<label>` or is associated with label
+- **Label Activation**: Clicking `<label>` focuses associated control
+- **Submission Rule**: Keep submit enabled until submission starts; disable during request
+- **Don't Block Typing**: Allow any input & show validation feedback
+- **Don't Pre-disable**: Allow submitting incomplete forms to surface validation
+- **No Dead Zones**: Checkboxes & radios avoid dead zones; label & control share hit target
+- **Error Placement**: Show errors next to fields; on submit, focus first error
+- **Autocomplete**: Set autocomplete & meaningful name values for autofill
+- **Spellcheck**: Disable for emails, codes, usernames, etc.
+- **Input Types**: Use correct type & inputmode for better keyboards & validation
+- **Placeholders**: Signal emptiness, end with ellipsis
+- **Placeholder Value**: Set to example value or pattern
+- **Unsaved Changes**: Warn before navigation when data could be lost
+- **Password Managers**: Ensure compatibility & allow pasting one-time codes
+- **Avoid Password Triggers**: For non-auth fields, avoid reserved names, use `autocomplete="off"`
+- **Text Replacements**: Trim input values to avoid confusing error messages
+- **Windows Select**: Explicitly set background-color & color on native `<select>`
+
+### Performance & Optimization
+- **Device Matrix**: Test iOS Low Power Mode & macOS Safari
+- **Measure Reliably**: Disable extensions that add overhead
+- **Track Re-renders**: Minimize & make re-renders fast
+- **Throttle Profiling**: Test with CPU & network throttling
+- **Minimize Layout**: Batch reads/writes; avoid unnecessary reflows/repaints
+- **Network Budget**: POST/PATCH/DELETE complete in <500ms
+- **Keystroke Cost**: Prefer uncontrolled inputs; make controlled loops cheap
+- **Large Lists**: Virtualize with virtua or `content-visibility: auto`
+- **Preload Wisely**: Preload only above-the-fold images; lazy-load rest
+- **No Image CLS**: Set explicit image dimensions & reserve space
+- **Preconnect**: Use `<link rel="preconnect">` for asset/CDN domains
+- **Preload Fonts**: For critical text to avoid flash & layout shift
+- **Subset Fonts**: Ship only code points/scripts you use via unicode-range
+- **Web Workers**: Move long tasks to Web Workers to avoid blocking main thread
+
+### Copywriting & Content Strategy
+- **Active Voice**: Instead of "The CLI will be installed," say "Install the CLI."
+- **Title Case**: Headings & buttons use Title Case (Chicago). Marketing pages use sentence case.
+- **Clear & Concise**: Use as few words as possible.
+- **Prefer &**: Use & over and.
+- **Action-Oriented**: Instead of "You will need the CLI…" say "Install the CLI…"
+- **Consistent Nouns**: Introduce as few unique terms as possible.
+- **Second Person**: Write in second person. Avoid first person.
+- **Consistent Placeholders**: Strings: YOUR_API_TOKEN_HERE. Numbers: 0123456789.
+- **Numerals for Counts**: Instead of "eight deployments" say "8 deployments"
+- **Currency Formatting**: In any given context, display currency with either 0 or 2 decimal places, never mix both.
+- **Space Separation**: Instead of 10MB say 10 MB. Use non-breaking space: `10&nbsp;MB`
+- **Positive Language**: Frame messages in encouraging, problem-solving way, even for errors.
+- **Error Guidance**: Don't just state what went wrong—tell user how to fix it.
+- **Avoid Ambiguity**: Labels are clear & specific. Instead of "Continue" say "Save API Key"

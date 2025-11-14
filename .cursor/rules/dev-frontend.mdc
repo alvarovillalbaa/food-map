@@ -1,0 +1,461 @@
+---
+description: Comprehensive frontend development rules for Clous AI-first HR platform
+alwaysApply: false
+---
+# Clous Frontend Development Rules
+
+## 🏗️ Architecture & Organization
+
+### Component Architecture
+- **Component Registry Pattern**: Use `componentRegistry` in `components/experience/componentRegistry.ts` for dynamic component rendering
+- **Composed Components**: Prefer composition over inheritance. Use wrapper components like `CreateObjectWrapper`
+- **Component Categories**:
+  - `components/experience/` - Core user experience components (chat, canvas, artifacts)
+  - `components/cards/` - Reusable card components with consistent styling
+  - `components/ui/` - Base UI primitives (buttons, inputs, modals)
+  - `components/modes/` - Mode-specific components (dashboard, documents, etc.)
+  - `components/ai-elements/` - AI-specific components and interactions
+
+### File Structure Conventions
+```
+components/
+├── experience/          # Core UX components
+├── cards/              # Reusable cards
+├── ui/                 # Base UI primitives
+├── modes/              # Feature-specific modes
+├── ai-elements/        # AI interactions
+├── navigation/         # Navigation components
+├── modals/             # Modal dialogs
+└── tooltips/           # Tooltip components
+```
+
+### Naming Conventions
+- **Components**: PascalCase (`GlobalList.tsx`, `ChatComponent.tsx`)
+- **Hooks**: camelCase with `use` prefix (`useUniversalSearch.ts`, `useData.ts`)
+- **Types**: PascalCase with descriptive suffixes (`GlobalCardType`, `CanvasResponse`)
+- **Utils**: camelCase (`parsingUtils.ts`, `formattingUtils.tsx`)
+- **Constants**: UPPER_SNAKE_CASE (`DEFAULT_COLOR_PALETTE`, `AI_GATE`)
+
+## 🎯 State Management & Data Flow
+
+### Hook Patterns
+- **Data Fetching**: Use SWR with `useData.ts` hooks (`useCandidates`, `useJobs`, `useEmployees`)
+- **API Management**: Leverage `useAPICallManager` for request queuing and priority handling
+- **Universal Search**: Use `useUniversalSearch` for complex search operations with fallback logic
+- **Local State**: Prefer `useLocalUIStates` for UI state persistence in localStorage
+
+### State Management Rules
+```typescript
+// ✅ GOOD: Use dedicated data hooks
+const { data: candidates, error, isLoading } = useCandidates(jobId, candidateId, type);
+
+// ✅ GOOD: Use API call manager for complex operations
+const { executeCall } = useAPICallManager(getAPIConfig());
+
+// ❌ BAD: Direct API calls in components
+const response = await fetch('/api/candidates');
+```
+
+### Error Handling
+- Use `useAPICallManager` for centralized error handling and retry logic
+- Implement fallback providers for AI operations (OpenAI → Anthropic → Groq)
+- Handle timeout errors with proper user feedback
+- Use `useToast` for user notifications
+
+## 🎨 Styling & Design System
+
+### Tailwind CSS Patterns
+- **Color System**: Use CSS custom properties defined in `app/globals.css`
+- **Theme Support**: Implement dark/light mode with `next-themes`
+- **Component Variants**: Use `class-variance-authority` for component variants
+
+### CSS Organization
+```css
+/* ✅ GOOD: Use CSS custom properties */
+background-color: hsl(var(--primary));
+color: hsl(var(--primary-foreground));
+
+/* ✅ GOOD: Leverage Tailwind utilities */
+className="bg-primary text-primary-foreground hover:bg-primary/90"
+```
+
+### Design Tokens
+- **Primary Colors**: Orange-based palette (`--primary: 22 89% 54%`)
+- **Chart Colors**: Use `DEFAULT_COLOR_PALETTE` from `types/chartColors.ts`
+- **Spacing**: Follow Tailwind's spacing scale (4px increments)
+- **Typography**: Montserrat font family with Roca One for headings
+
+## 🔌 API Integration Patterns
+
+### API Client Structure
+- **Intelligence Client**: Use `IntelligenceClient` for AI operations
+- **Processing Client**: Use `ProcessingClient` for data processing
+- **Service Client**: Use `getObjectsList` for standard CRUD operations
+
+### Request Patterns
+```typescript
+// ✅ GOOD: Use structured API calls
+const response = await intelligenceClient.generateContent({
+  prompt: userInput,
+  context: additionalContext,
+  streamResponse: true
+});
+
+// ✅ GOOD: Handle errors gracefully
+try {
+  const data = await executeCall(
+    'generateContent',
+    APICallPriority.HIGH,
+    (signal) => intelligenceClient.generateContent(params, signal)
+  );
+} catch (error) {
+  // Handle error with user feedback
+}
+```
+
+### WebSocket Integration
+- Use `useUnifiedWebSocket` for real-time communication
+- Implement proper channel management (`ChannelType`)
+- Handle connection states and reconnection logic
+
+## 🤖 AI Integration Patterns
+
+### AI Component Flow
+```
+@clients/ → @intelligence/ → @ai-calls/
+```
+
+### AI Request Structure
+```typescript
+interface AIRequestParams {
+  provider: 'openai' | 'anthropic' | 'groq' | 'perplexity';
+  fallbackProvider?: string;
+  modelParams: {
+    model: string;
+    temperature?: number;
+    maxTokens?: number;
+  };
+  systemPrompt?: string;
+  messages: Message[];
+}
+```
+
+### AI Error Handling
+- Implement provider fallback chains
+- Handle rate limiting with exponential backoff
+- Provide meaningful error messages to users
+- Use `shouldTriggerProviderFallback` for automatic failover
+
+## 🌐 Internationalization
+
+### Translation System
+- **Primary**: Use `next-intl` for server-side translations
+- **Client-side**: Use `useDirectTranslations` hook
+- **Dynamic**: Use `useTranslatedText` for runtime translations
+
+### Translation Patterns
+```typescript
+// ✅ GOOD: Use translation hooks
+const { t } = useDirectTranslation();
+const translatedText = t('welcome');
+
+// ✅ GOOD: Handle language detection
+const browserLang = useBrowserLanguage();
+```
+
+### Language Support
+- **Supported**: English (en), Spanish (es), German (de), Italian (it), French (fr), Portuguese (pt)
+- **Fallback**: Always default to English
+- **Storage**: Use localStorage for translation caching
+
+## 📱 Component Development
+
+### Component Structure
+```typescript
+// ✅ GOOD: Proper component structure
+interface ComponentProps {
+  // Required props first
+  id: string;
+  type: ComponentType;
+  
+  // Optional props with defaults
+  isVisible?: boolean;
+  onAction?: (action: string) => void;
+  
+  // Event handlers
+  onFocus?: () => void;
+  onBlur?: () => void;
+}
+
+export const Component: React.FC<ComponentProps> = ({
+  id,
+  type,
+  isVisible = true,
+  onAction,
+  ...props
+}) => {
+  // Hooks first
+  const { data, loading } = useData(id);
+  const [localState, setLocalState] = useState(false);
+  
+  // Event handlers
+  const handleAction = useCallback((action: string) => {
+    onAction?.(action);
+  }, [onAction]);
+  
+  // Render logic
+  if (loading) return <Skeleton />;
+  if (!isVisible) return null;
+  
+  return (
+    <div className="component-container">
+      {/* Component content */}
+    </div>
+  );
+};
+```
+
+## 🎯 Web Interface Guidelines
+
+### Interactions
+- **Keyboard Accessibility**: All flows are keyboard-operable & follow WAI-ARIA Authoring Patterns
+- **Clear Focus**: Every focusable element shows a visible focus ring. Prefer `:focus-visible` over `:focus`
+- **Focus Management**: Use focus traps, move & return focus according to WAI-ARIA Patterns
+- **Hit Targets**: Match visual & hit targets. If visual target < 24px, expand hit target to ≥ 24px. Mobile minimum: 44px
+- **Mobile Input**: `<input>` font size ≥ 16px on mobile to prevent iOS Safari auto-zoom/pan
+- **Respect Zoom**: Never disable browser zoom
+- **Hydration Safety**: Inputs must not lose focus or value after hydration
+- **Paste Support**: Never disable paste in `<input>` or `<textarea>`
+- **Loading States**: Show loading indicator & keep original label on buttons
+- **Loading Timing**: Add show-delay (~150–300ms) & minimum visible time (~300–500ms) to avoid flicker
+- **URL State**: Persist state in URL for share, refresh, Back/Forward navigation (use nuqs)
+- **Optimistic Updates**: Update UI immediately when success is likely; reconcile on server response
+- **Ellipsis Convention**: Menu options that open follow-up end with ellipsis ("Rename…")
+- **Destructive Actions**: Require confirmation or provide Undo with safe window
+- **Touch Actions**: Set `touch-action: manipulation` to prevent double-tap zoom
+- **Tap Highlight**: Set `webkit-tap-highlight-color` to match design
+- **Tooltip Timing**: Delay first tooltip in group; subsequent peers have no delay
+- **Overscroll**: Set `overscroll-behavior: contain` in modals/drawers
+- **Scroll Persistence**: Back/Forward restores prior scroll position
+- **Autofocus**: Use on desktop screens with single primary input. Rarely on mobile due to layout shift
+- **No Dead Zones**: If part of control looks interactive, it should be interactive
+- **Deep Linking**: Link filters, tabs, pagination, expanded panels - anytime useState is used
+- **Drag Interactions**: Disable text selection & apply inert while dragging
+- **Links**: Use `<a>` or `<Link>` for navigation, never `<button>` or `<div>`
+- **Async Updates**: Use polite `aria-live` for toasts & inline validation
+- **Keyboard Shortcuts**: Internationalize for non-QWERTY layouts with platform-specific symbols
+
+### Animations
+- **Motion Preference**: Honor `prefers-reduced-motion` with reduced-motion variant
+- **Implementation**: Prefer CSS > Web Animations API > JavaScript libraries
+- **Compositor-Friendly**: Prioritize GPU-accelerated properties (`transform`, `opacity`)
+- **Necessity**: Only animate when it clarifies cause & effect or adds deliberate delight
+- **Easing**: Choose based on what changes (size, distance, trigger)
+- **Interruptible**: Animations are cancelable by user input
+- **Input-Driven**: Avoid autoplay; animate in response to actions
+- **Transform Origin**: Anchor motion to where it "physically" starts
+- **Never `transition: all`**: Explicitly list only intended properties
+- **SVG Transforms**: Apply to `<g>` wrappers with `transform-box: fill-box; transform-origin: center;`
+
+### Layout
+- **Optical Alignment**: Adjust ±1px when perception beats geometry
+- **Deliberate Alignment**: Every element aligns intentionally to grid, baseline, edge, or optical center
+- **Contrast Balance**: Adjust weight, size, spacing, or color when text & icons sit side by side
+- **Responsive Coverage**: Verify on mobile, laptop, & ultra-wide (zoom to 50% for ultra-wide)
+- **Safe Areas**: Account for notches & insets with safe-area variables
+- **Scrollbars**: Only render useful scrollbars; fix overflow issues
+- **Browser Sizing**: Prefer flex/grid/intrinsic layout over measuring in JS
+
+### Content
+- **Inline Help**: Prefer inline explanations; use tooltips as last resort
+- **Stable Skeletons**: Mirror final content exactly to avoid layout shift
+- **Page Titles**: `<title>` reflects current context
+- **No Dead Ends**: Every screen offers next step or recovery path
+- **All States**: Design empty, sparse, dense, & error states
+- **Typography**: Use curly quotes (" ") over straight quotes (" ")
+- **Avoid Widows/Orphans**: Tidy rag & line breaks
+- **Tabular Numbers**: Use `font-variant-numeric: tabular-nums` for comparisons
+- **Status Cues**: Don't rely on color alone; include text labels
+- **Icon Labels**: Convey same meaning with text for non-sighted users
+- **Ellipsis Character**: Use … over three periods
+- **Anchored Headings**: Set `scroll-margin-top` for headers when linking to sections
+- **Content Resilience**: Handle short, average, & very long content
+- **Locale Formats**: Format dates, times, numbers, delimiters, & currencies for user's locale
+- **Language Detection**: Use Accept-Language header & navigator.languages, never IP/GPS
+- **Accessible Content**: Set accurate names (`aria-label`), hide decoration (`aria-hidden`)
+- **Icon Buttons**: Provide descriptive `aria-label`
+- **Semantics First**: Prefer native elements before `aria-*`
+- **Headings**: Hierarchical `<h1–h6>` & "Skip to content" link
+- **Non-breaking Spaces**: Use `&nbsp;` for units, shortcuts & names: `10&nbsp;MB`, `⌘&nbsp;+&nbsp;K`
+
+### Forms
+- **Enter Submits**: When text input focused, Enter submits
+- **Textarea Behavior**: In `<textarea>`, ⌘/⌃+Enter submits; Enter inserts new line
+- **Labels Everywhere**: Every control has `<label>` or is associated with label
+- **Label Activation**: Clicking `<label>` focuses associated control
+- **Submission Rule**: Keep submit enabled until submission starts; disable during request
+- **Don't Block Typing**: Allow any input & show validation feedback
+- **Don't Pre-disable**: Allow submitting incomplete forms to surface validation
+- **No Dead Zones**: Checkboxes & radios avoid dead zones; label & control share hit target
+- **Error Placement**: Show errors next to fields; on submit, focus first error
+- **Autocomplete**: Set autocomplete & meaningful name values for autofill
+- **Spellcheck**: Disable for emails, codes, usernames, etc.
+- **Input Types**: Use correct type & inputmode for better keyboards & validation
+- **Placeholders**: Signal emptiness, end with ellipsis
+- **Placeholder Value**: Set to example value or pattern
+- **Unsaved Changes**: Warn before navigation when data could be lost
+- **Password Managers**: Ensure compatibility & allow pasting one-time codes
+- **Avoid Password Triggers**: For non-auth fields, avoid reserved names, use `autocomplete="off"`
+- **Text Replacements**: Trim input values to avoid confusing error messages
+- **Windows Select**: Explicitly set background-color & color on native `<select>`
+
+### Performance
+- **Device Matrix**: Test iOS Low Power Mode & macOS Safari
+- **Measure Reliably**: Disable extensions that add overhead
+- **Track Re-renders**: Minimize & make re-renders fast
+- **Throttle Profiling**: Test with CPU & network throttling
+- **Minimize Layout**: Batch reads/writes; avoid unnecessary reflows/repaints
+- **Network Budget**: POST/PATCH/DELETE complete in <500ms
+- **Keystroke Cost**: Prefer uncontrolled inputs; make controlled loops cheap
+- **Large Lists**: Virtualize with virtua or `content-visibility: auto`
+- **Preload Wisely**: Preload only above-the-fold images; lazy-load rest
+- **No Image CLS**: Set explicit image dimensions & reserve space
+- **Preconnect**: Use `<link rel="preconnect">` for asset/CDN domains
+- **Preload Fonts**: For critical text to avoid flash & layout shift
+- **Subset Fonts**: Ship only code points/scripts you use via unicode-range
+- **Web Workers**: Move long tasks to Web Workers to avoid blocking main thread
+
+### Design
+- **Layered Shadows**: Mimic ambient + direct light with at least two layers
+- **Crisp Borders**: Combine borders & shadows; semi-transparent borders improve edge clarity
+- **Nested Radii**: Child radius ≤ parent radius & concentric so curves align
+- **Hue Consistency**: On non-neutral backgrounds, tint borders/shadows/text toward same hue
+- **Accessible Charts**: Use color-blind-friendly palettes
+- **Minimum Contrast**: Prefer APCA over WCAG 2 for more accurate perceptual contrast
+- **Interaction Contrast**: :hover, :active, :focus have more contrast than rest state
+- **Browser UI**: Set `<meta name="theme-color">` to align browser theme with page background
+- **Color Scheme**: Style `<html>` with `color-scheme: dark` in dark themes
+- **Text Anti-aliasing**: Scaling text can change smoothing; prefer animating wrapper
+- **Avoid Gradient Banding**: Some colors & display types have banding; use masks instead
+
+### React useEffect Guidelines
+
+**Before using `useEffect`, read:** [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)
+
+Common cases where `useEffect` is NOT needed:
+- Transforming data for rendering (use variables or useMemo instead)
+- Handling user events (use event handlers instead)
+- Resetting state when props change (use key prop or calculate during render)
+- Updating state based on props/state changes (calculate during render)
+
+Only use `useEffect` for:
+- Synchronizing with external systems (APIs, DOM, third-party libraries)
+- Cleanup that must happen when component unmounts
+
+### Performance Optimization
+- Use `React.memo` for expensive components
+- Implement `useMemo` and `useCallback` for expensive computations
+- Use `useLocalUIStates` for UI state persistence
+- Leverage SWR's built-in caching and deduplication
+
+### Accessibility
+- Use semantic HTML elements
+- Implement proper ARIA labels
+- Ensure keyboard navigation support
+- Maintain color contrast ratios
+
+## 🔧 Utility Functions
+
+### Common Utilities
+- **Formatting**: Use `parsingUtils.ts` for text processing
+- **Date Handling**: Use `date-fns` for date operations
+- **Class Names**: Use `cn()` utility from `lib/utils.ts`
+- **File Handling**: Use utilities in `utils/fileHandling.ts`
+
+### Utility Patterns
+```typescript
+// ✅ GOOD: Use utility functions
+import { cn } from '@/lib/utils';
+import { formatTimeDifference } from '@/utils/preFormattingUtils';
+import { singularizeText } from '@/utils/parsingUtils';
+
+const className = cn('base-class', conditionalClass && 'conditional-class');
+const timeAgo = formatTimeDifference(createdAt);
+const singularType = singularizeText(pluralType);
+```
+
+## 🚀 Performance & Optimization
+
+### Bundle Optimization
+- Use dynamic imports for large components
+- Implement code splitting at route level
+- Optimize images with Next.js Image component
+- Use `sharp` for image processing
+
+### Runtime Performance
+- Implement proper loading states with skeletons
+- Use `useAPICallManager` for request optimization
+- Leverage SWR's caching and background updates
+- Implement proper error boundaries
+
+### Memory Management
+- Clean up event listeners and subscriptions
+- Use `AbortController` for request cancellation
+- Implement proper cleanup in `useEffect`
+- Avoid memory leaks in WebSocket connections
+
+## 🧪 Testing & Quality
+
+### Code Quality
+- Use TypeScript strict mode
+- Implement proper error boundaries
+- Use ESLint with Next.js config
+- Follow React best practices
+
+### Development Workflow
+- Use `npm run dev` with Turbopack for development
+- Implement proper logging with `useAPICallManager`
+- Use `useAnalytics` for user behavior tracking
+- Document complex logic with JSDoc comments
+
+## 🔒 Security & Best Practices
+
+### Security Headers
+- Implement CSP headers in `next.config.js`
+- Use proper authentication with `useAccount`
+- Validate user inputs before API calls
+- Implement proper CORS policies
+
+### Data Handling
+- Use proper TypeScript types for all data
+- Implement input sanitization
+- Use secure storage for sensitive data
+- Implement proper error handling without data leaks
+
+## 📚 Documentation & Maintenance
+
+### Code Documentation
+- Document complex algorithms and business logic
+- Use JSDoc for function documentation
+- Maintain README files for complex components
+- Document API integration patterns
+
+### Daily Logs
+- Document changes in `docs/daily/YYYY-MM-DD.md`
+- Use bullet points for brief change logs
+- Include impact descriptions
+- Track architectural decisions
+
+---
+
+## 🎯 Key Principles
+
+1. **Performance First**: Always consider performance implications
+2. **Type Safety**: Use TypeScript strictly, avoid `any` types
+3. **User Experience**: Prioritize smooth, responsive interactions
+4. **Maintainability**: Write clean, readable, and well-documented code
+5. **Scalability**: Design components and hooks for reusability
+6. **Error Resilience**: Implement proper error handling and fallbacks
+7. **Accessibility**: Ensure components are accessible to all users
+
+Remember: This is an AI-first platform. Every component should be designed with AI interactions in mind, providing clear feedback, handling streaming responses, and gracefully managing AI errors and fallbacks.

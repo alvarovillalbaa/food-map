@@ -1,0 +1,133 @@
+---
+alwaysApply: true
+---
+# Documentation Structure
+
+We document to reduce technical debt. Documentation should live close to the code it describes. Here are the documentation types and locations:
+
+## Module-Level Documentation (Preferred)
+
+For code modules (services/, components/, hooks/, utils/, etc.), documentation lives in a `docs/` subfolder within each module:
+
+```
+/services/websocketHandlers/
+├── docs/
+│   ├── README.md          # Quick start & overview
+│   ├── AGENTS.md          # AI-agent optimized documentation
+│   ├── ARCHITECTURE.md    # Detailed system architecture
+│   ├── OVERVIEW.md        # Complete system overview
+│   ├── TESTING.md         # Testing strategies & examples
+│   ├── SETUP.md           # Setup instructions
+│   ├── FAQ.md             # Common questions
+│   └── CHANGELOG.md       # Version history
+├── Handler1.ts
+└── Handler2.ts
+```
+
+**When to create module docs:**
+- Module has significant complexity (>500 LOC)
+- Module has existing architecture documentation
+- Module requires setup or configuration
+- Module has specific testing requirements
+
+**What to include:**
+- **README.md** (required): Quick start, purpose, basic usage
+- **ARCHITECTURE.md** (optional): Detailed design, patterns, decisions
+- **AGENTS.md** (optional): AI-agent optimized reference
+- **TESTING.md** (optional): Testing strategies, examples
+- **SETUP.md** (optional): Configuration, environment setup
+- **FAQ.md** (optional): Common questions, troubleshooting
+- **CHANGELOG.md** (optional): Version history, migrations
+- **OVERVIEW.md** (optional): Comprehensive guide
+
+## Project-Level Documentation
+
+For cross-cutting concerns, documentation lives in `docs/` root folders:
+
+### docs/daily/
+- **Purpose:** Brief task/workflow logs (2 lines max, bullet points)
+- **Format:** `YYYY-MM-DD.md` with date-based entries
+- **Usage:** Log each significant change during development
+- **Example:**
+  ```markdown
+  - Migrated canvas docs from docs/architecture/ to services/canvas/docs/
+  - Created complete documentation structure for websocketHandlers
+  ```
+
+### docs/patterns/
+- **Purpose:** Cross-cutting architectural patterns used across the platform
+- **Examples:** SSR/SEO patterns, authentication flows, state management patterns
+- **When to use:** Pattern applies to multiple modules/domains
+
+### docs/problems-solved/
+- **Purpose:** Document solutions to complex errors worth preserving
+- **Avoid:** Linter error fixes, simple typos
+- **Include:** Root cause analysis, solution approach, prevention strategy
+
+### docs/research/
+- **Purpose:** Research findings from external sources
+- **Examples:** Library comparisons, performance investigations, API research
+- **Include:** Findings, recommendations, references
+
+### docs/cursor-prompts/
+- **Purpose:** Complex, reusable prompts for AI tools (ChatGPT, Cursor)
+- **When to use:** Prompt is sophisticated and took significant time to develop
+- **Include:** Prompt text, usage context, expected output
+
+## Decision Tree
+
+**Where should I document X?**
+
+1. **Is it module-specific?** (e.g., how WebSocketHandlers work)
+   → `{module}/docs/ARCHITECTURE.md`
+
+2. **Is it a cross-cutting pattern?** (e.g., SSR pattern used everywhere)
+   → `docs/patterns/pattern-name.md`
+
+3. **Is it project setup?** (e.g., configuring environment)
+   → `docs/setup/setup-name.md`
+
+4. **Is it a daily log?** (e.g., brief change summary)
+   → `docs/daily/YYYY-MM-DD.md`
+
+5. **Is it an error fix?** (e.g., complex bug solution)
+   → `docs/error_fixes/error-name.md`
+
+6. **Is it research?** (e.g., library comparison)
+   → `docs/research/topic-name.md`
+
+7. **Is it an example?** (e.g., reference implementation)
+   → `docs/examples/example-name.md`
+
+8. **Doesn't fit anywhere?** (e.g., temporary notes)
+   → `docs/temporary/note-name.md`
+
+## Documentation Best Practices
+
+1. **Keep docs close to code** - Module docs live in module folders
+2. **Update docs with code changes** - Documentation is part of the change
+3. **Use consistent structure** - Follow the module docs template
+4. **Write for AI agents** - AGENTS.md should be machine-readable and comprehensive
+5. **Be concise in daily logs** - 2 lines max, bullet points
+6. **Deprecate outdated docs** - Remove or update stale documentation
+7. **Cross-reference** - Link related documentation
+
+## Migration Notes
+
+**Deprecated:** `docs/architecture/` (central architecture folder)  
+**New approach:** Module-specific `docs/` folders within each module
+
+**Reason:** Documentation lives closer to code, easier to maintain, clearer ownership
+
+**What moved:**
+- WebSocket architecture → `services/websocketHandlers/docs/`
+- Canvas architecture → `services/canvas/docs/`
+- Business logic architecture → `services/businessLogic/docs/`
+
+**What stays in docs/:**
+- Cross-cutting patterns (docs/patterns/)
+- Project setup (docs/setup/)
+- Daily logs (docs/daily/)
+- Error fixes (docs/error_fixes/)
+- Research (docs/research/)
+- Examples (docs/examples/)
