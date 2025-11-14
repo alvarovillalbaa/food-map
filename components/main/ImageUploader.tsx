@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import * as React from 'react'
 
 interface ImageUploaderProps {
   onImageSelect: (file: File) => void
@@ -6,7 +6,7 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({ onImageSelect, previewUrl }: ImageUploaderProps) {
-  const [dragActive, setDragActive] = useState(false)
+  const [dragActive, setDragActive] = React.useState(false)
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()

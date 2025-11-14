@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import * as React from 'react'
 import ImageUploader from '@/components/main/ImageUploader'
 import IngredientChips from '@/components/main/IngredientChips'
 import RecipeList from '@/components/main/RecipeList'
@@ -13,11 +13,11 @@ interface Recipe {
 }
 
 export default function IngredientsPage() {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [ingredients, setIngredients] = useState<string[]>([])
-  const [recipes, setRecipes] = useState<Recipe[]>([])
-  const [loading, setLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null)
+  const [ingredients, setIngredients] = React.useState<string[]>([])
+  const [recipes, setRecipes] = React.useState<Recipe[]>([])
+  const [loading, setLoading] = React.useState(false)
 
   const handleImageSelect = async (file: File) => {
     setSelectedImage(file)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import * as React from 'react'
 import ImageUploader from '@/components/main/ImageUploader'
 import DishResultBox from '@/components/main/DishResultBox'
 import WorldMap from '@/components/main/WorldMap'
@@ -13,17 +13,17 @@ interface UnlockedCountry {
 }
 
 export default function WorldMapPage() {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [dishName, setDishName] = useState<string>('')
-  const [countryName, setCountryName] = useState<string>('')
-  const [countryCode, setCountryCode] = useState<string>('')
-  const [confidence, setConfidence] = useState<number>(0)
-  const [unlockedCountries, setUnlockedCountries] = useState<UnlockedCountry[]>([])
-  const [loading, setLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null)
+  const [dishName, setDishName] = React.useState<string>('')
+  const [countryName, setCountryName] = React.useState<string>('')
+  const [countryCode, setCountryCode] = React.useState<string>('')
+  const [confidence, setConfidence] = React.useState<number>(0)
+  const [unlockedCountries, setUnlockedCountries] = React.useState<UnlockedCountry[]>([])
+  const [loading, setLoading] = React.useState(false)
 
   // Load unlocked countries on mount
-  useEffect(() => {
+  React.useEffect(() => {
     fetchUnlockedCountries()
   }, [])
 

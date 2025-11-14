@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import * as React from 'react'
 
 interface IngredientChipsProps {
   ingredients: string[]
@@ -7,7 +7,7 @@ interface IngredientChipsProps {
 }
 
 export default function IngredientChips({ ingredients, onRemove, onAdd }: IngredientChipsProps) {
-  const [newIngredient, setNewIngredient] = useState('')
+  const [newIngredient, setNewIngredient] = React.useState('')
 
   const handleAdd = () => {
     if (newIngredient.trim() && onAdd) {
